@@ -49,6 +49,9 @@ STYLE_MESSAGE="${bold}${fg_green}"
 STYLE_COMMAND="${bold}${fg_yellow}"
 STYLE_PAUSE="${bold}${fg_white}"
 
+# Formatting for print and heading
+MESSAGE_PREFIX="\$ ## "  # prefix the line w/ this
+TYPE_MESSAGES=1          # if 1, simulate typing it
 
 
 ##################################################
@@ -94,7 +97,7 @@ function demonstrateCapabilities {
 ##################################################
 ## Helper functions
 ##################################################
-function typeit {
+function _typeit {
   string="$*"
   for (( idx=0; idx<${#string}; idx++ )); do
     echo -n "${string:$idx:1}"
@@ -109,7 +112,7 @@ function typeit {
 # Like cmd, but don't actually execute the command
 function showCmd {
   echo -n "${STYLE_COMMAND}\$ "
-  typeit "$*"
+  _typeit "$*"
   echo "${reset}"
 }
 
@@ -119,9 +122,19 @@ function cmd {
   "$@"
 }
 
+function _typemsgifenabled {
+  if [[ ${TYPE_MESSAGES} == 1 ]]; then
+    _typeit "${MESSAGE_PREFIX}$*"
+  else
+    echo -n "${MESSAGE_PREFIX}$*"
+  fi
+}
+
 # Print a message: print <message>...
 function print {
-  echo "${STYLE_MESSAGE}$*${reset}"
+  echo -n "${STYLE_MESSAGE}"
+  _typemsgifenabled "$*"
+  echo "${reset}"
 }
 
 # Wait for a keypress: pressAnyKey [<message>...]
@@ -136,7 +149,9 @@ function pressAnyKey {
 
 # Print a heading: heading <message>...
 function heading {
-  echo "${STYLE_HEADING}$*${reset}"
+  echo -n "${STYLE_HEADING}"
+  _typemsgifenabled "$*"
+  echo "${reset}"
 }
 
 # Auto-incrementing demo steps: step <message>...
@@ -158,7 +173,7 @@ function hereCmd {
   echo "$here"
   sleep 1
   echo -n "$STYLE_COMMAND"
-  typeit "$tag"
+  _typeit "$tag"
   sleep 1
   echo "${reset}"
   # shellcheck disable=SC2048
