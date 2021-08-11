@@ -50,8 +50,8 @@ STYLE_COMMAND="${bold}${fg_yellow}"
 STYLE_PAUSE="${bold}${fg_white}"
 
 # Formatting for print and heading
-MESSAGE_PREFIX="\$ ## "  # prefix the line w/ this
-TYPE_MESSAGES=1          # if 1, simulate typing it
+MESSAGE_PREFIX="## "  # prefix the line w/ this
+TYPE_MESSAGES=1       # if 1, simulate typing it
 
 
 ##################################################
@@ -109,9 +109,15 @@ function _typeit {
   done
 }
 
+function _prompt {
+  echo -n "\$ "
+  sleep 1
+}
+
 # Like cmd, but don't actually execute the command
 function showCmd {
-  echo -n "${STYLE_COMMAND}\$ "
+  echo -n "${STYLE_COMMAND}"
+  _prompt
   _typeit "$*"
   echo "${reset}"
 }
@@ -123,6 +129,7 @@ function cmd {
 }
 
 function _typemsgifenabled {
+  _prompt
   if [[ ${TYPE_MESSAGES} == 1 ]]; then
     _typeit "${MESSAGE_PREFIX}$*"
   else
@@ -140,9 +147,6 @@ function print {
 # Wait for a keypress: pressAnyKey [<message>...]
 function pressAnyKey {
   text="$*"
-  if [[ -z $text ]]; then
-    text="Press any key to continue..."
-  fi
   read -N1 -rs -p "${STYLE_PAUSE}$text${reset}${cursor_hide}"
   echo "${reset}"
 }
@@ -185,22 +189,15 @@ if [[ $(basename "$0") == "demo-helpers.sh" ]]; then
 
   echo ""; echo ""
 
-  sleep 1
   heading "Headings look like this via heading"
-  sleep 2
   echo ""
   print "You can print simple messages via print"
-  sleep 2
   echo ""
   cmd echo "Commands are run via cmd or just printed via showCmd"
-  sleep 1
   echo ""
   step "the step command"
-  sleep 2
   step "provides auto-numbered steps"
-  sleep 2
   step "hereCmd can be used to run commands using heredoc"
-  sleep 2
   echo ""
   CONTENTS=$(cat - <<THETAG
 apiVersion: scribe.backube/v1alpha1
