@@ -159,6 +159,7 @@ function hereCmd {
   sleep 1
   echo -n "$STYLE_COMMAND"
   typeit "$tag"
+  sleep 1
   echo "${reset}"
   # shellcheck disable=SC2048
   $* <<< "$here"
@@ -167,12 +168,25 @@ function hereCmd {
 if [[ $(basename "$0") == "demo-helpers.sh" ]]; then
   demonstrateCapabilities
 
+  echo ""; echo ""
+
+  sleep 1
   heading "Headings look like this via heading"
+  sleep 2
+  echo ""
   print "You can print simple messages via print"
-  showCmd "Commands are run via cmd or just printed via showCmd"
+  sleep 2
+  echo ""
+  cmd echo "Commands are run via cmd or just printed via showCmd"
+  sleep 1
+  echo ""
   step "the step command"
+  sleep 2
   step "provides auto-numbered steps"
+  sleep 2
   step "hereCmd can be used to run commands using heredoc"
+  sleep 2
+  echo ""
   CONTENTS=$(cat - <<THETAG
 apiVersion: scribe.backube/v1alpha1
 kind: ReplicationDestination
