@@ -49,6 +49,9 @@ STYLE_MESSAGE="${bold}${fg_green}"
 STYLE_COMMAND="${bold}${fg_yellow}"
 STYLE_PAUSE="${bold}${fg_white}"
 
+# What the prompt looks like
+CLI_PROMPT="\$ "
+
 # Formatting for print and heading
 MESSAGE_PREFIX="## "  # prefix the line w/ this
 TYPE_MESSAGES=1       # if 1, simulate typing it
@@ -110,14 +113,14 @@ function _typeit {
 }
 
 function _prompt {
-  echo -n "\$ "
+  echo -n "${CLI_PROMPT}"
   sleep 1
 }
 
 # Like cmd, but don't actually execute the command
 function showCmd {
-  echo -n "${STYLE_COMMAND}"
   _prompt
+  echo -n "${STYLE_COMMAND}"
   _typeit "$*"
   echo "${reset}"
 }
@@ -129,7 +132,6 @@ function cmd {
 }
 
 function _typemsgifenabled {
-  _prompt
   if [[ ${TYPE_MESSAGES} == 1 ]]; then
     _typeit "${MESSAGE_PREFIX}$*"
   else
@@ -139,6 +141,7 @@ function _typemsgifenabled {
 
 # Print a message: print <message>...
 function print {
+  _prompt
   echo -n "${STYLE_MESSAGE}"
   _typemsgifenabled "$*"
   echo "${reset}"
@@ -146,13 +149,16 @@ function print {
 
 # Wait for a keypress: pressAnyKey [<message>...]
 function pressAnyKey {
-  text="$*"
-  read -N1 -rs -p "${STYLE_PAUSE}$text${reset}${cursor_hide}"
+  _prompt
+  echo -n "${STYLE_PAUSE}"
+  _typemsgifenabled "$*"
+  read -N1 -rs
   echo "${reset}"
 }
 
 # Print a heading: heading <message>...
 function heading {
+  _prompt
   echo -n "${STYLE_HEADING}"
   _typemsgifenabled "$*"
   echo "${reset}"
@@ -194,6 +200,8 @@ if [[ $(basename "$0") == "demo-helpers.sh" ]]; then
   print "You can print simple messages via print"
   echo ""
   cmd echo "Commands are run via cmd or just printed via showCmd"
+  echo ""
+  pressAnyKey "You can pause and wait for a keypress (like now)"
   echo ""
   step "the step command"
   step "provides auto-numbered steps"
