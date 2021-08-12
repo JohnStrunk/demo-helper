@@ -128,7 +128,7 @@ function showCmd {
 # Execute a command: cmd <command> [<args>...]
 function cmd {
   showCmd "$@"
-  "$@"
+  eval "$@"
 }
 
 function _typemsgifenabled {
@@ -221,4 +221,6 @@ spec:
 THETAG
 )
   hereCmd "EOF" "$CONTENTS" "cat -"
+  echo ""
+  cmd "echo Pipelines work too | cat -"
 fi
