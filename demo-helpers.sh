@@ -187,8 +187,7 @@ function hereCmd {
   _typeit "$tag"
   sleep 1
   echo "${reset}"
-  # shellcheck disable=SC2048
-  $* <<< "$here"
+  eval "$*" <<< "$here"
 }
 
 # Run a command until any key is pressed
