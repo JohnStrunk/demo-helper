@@ -64,6 +64,7 @@ TYPE_MESSAGES=1       # if 1, simulate typing it
 # Return terminal to normal on exit
 function resetterm {
   echo -n "${reset}"
+  stty sane
 }
 trap resetterm EXIT
 
@@ -188,6 +189,16 @@ function hereCmd {
   echo "${reset}"
   # shellcheck disable=SC2048
   $* <<< "$here"
+}
+
+# Run a command until any key is pressed
+function runUntilKeypress {
+  showCmd "$*"
+  eval "$* &"
+  thepid="$!"
+  read -N1 -rs
+  kill -SIGINT "$thepid"
+  wait "$thepid"
 }
 
 if [[ $(basename "$0") == "demo-helpers.sh" ]]; then
