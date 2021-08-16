@@ -152,7 +152,10 @@ function print {
 function pressAnyKey {
   _prompt
   echo -n "${STYLE_PAUSE}"
-  _typemsgifenabled "$*"
+  # Only print if we've got a message
+  if [[ -n "$*" ]]; then
+    _typemsgifenabled "$*"
+  fi
   read -N1 -rs
   echo "${reset}"
 }
